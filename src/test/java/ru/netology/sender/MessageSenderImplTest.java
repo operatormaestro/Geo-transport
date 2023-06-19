@@ -13,6 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageSenderImplTest {
+    String localhost = GeoServiceImpl.LOCALHOST;
+    String moscowIp = GeoServiceImpl.MOSCOW_IP;
+    String newYorkIP = GeoServiceImpl.NEW_YORK_IP;
+    String someMoscowIp = "172.255.255.255";
+    String someNewYorkIp = "96.255.255.255";
+
+    Location localhostLoc = new Location(null, null, null, 0);
+    Location moscowLoc = new Location("Moscow", Country.RUSSIA, "Lenina", 15);
+    Location newYorkLoc = new Location("New York", Country.USA, " 10th Avenue", 32);
     @Test
     public void sendTest() {
         Map<String, String> headers = new HashMap<>();
@@ -21,11 +30,11 @@ public class MessageSenderImplTest {
         Map<String, String> headers3 = new HashMap<>();
         Map<String, String> headers4 = new HashMap<>();
         Map<String, String> headers5 = new HashMap<>();
-        headers.put(MessageSenderImpl.IP_ADDRESS_HEADER, GeoServiceImpl.LOCALHOST);
-        headers1.put(MessageSenderImpl.IP_ADDRESS_HEADER, GeoServiceImpl.MOSCOW_IP);
-        headers2.put(MessageSenderImpl.IP_ADDRESS_HEADER, GeoServiceImpl.NEW_YORK_IP);
-        headers3.put(MessageSenderImpl.IP_ADDRESS_HEADER, "172.255.255.255");
-        headers4.put(MessageSenderImpl.IP_ADDRESS_HEADER, "96.255.255.255");
+        headers.put(MessageSenderImpl.IP_ADDRESS_HEADER, localhost);
+        headers1.put(MessageSenderImpl.IP_ADDRESS_HEADER, moscowIp);
+        headers2.put(MessageSenderImpl.IP_ADDRESS_HEADER, newYorkIP);
+        headers3.put(MessageSenderImpl.IP_ADDRESS_HEADER, someMoscowIp);
+        headers4.put(MessageSenderImpl.IP_ADDRESS_HEADER, someNewYorkIp);
         headers5.put(null, null);
 
         LocalizationService localizationService = Mockito.mock(LocalizationService.class);
@@ -35,11 +44,11 @@ public class MessageSenderImplTest {
         Mockito.when(localizationService.locale(Country.GERMANY)).thenReturn("Welcome");
         Mockito.when(localizationService.locale(null)).thenReturn("Welcome");
         GeoService geoService = Mockito.mock(GeoService.class);
-        Mockito.when(geoService.byIp(GeoServiceImpl.LOCALHOST)).thenReturn(new Location(null, null, null, 0));
-        Mockito.when(geoService.byIp(GeoServiceImpl.MOSCOW_IP)).thenReturn(new Location("Moscow", Country.RUSSIA, "Lenina", 15));
-        Mockito.when(geoService.byIp(GeoServiceImpl.NEW_YORK_IP)).thenReturn(new Location("New York", Country.USA, " 10th Avenue", 32));
-        Mockito.when(geoService.byIp("172.255.255.255")).thenReturn(new Location("Moscow", Country.RUSSIA,  null, 0));
-        Mockito.when(geoService.byIp("96.255.255.255")).thenReturn(new Location("New York", Country.USA,  null, 0));
+        Mockito.when(geoService.byIp(localhost)).thenReturn(localhostLoc);
+        Mockito.when(geoService.byIp(moscowIp)).thenReturn(moscowLoc);
+        Mockito.when(geoService.byIp(newYorkIP)).thenReturn(newYorkLoc);
+        Mockito.when(geoService.byIp(someMoscowIp)).thenReturn(new Location("Moscow", Country.RUSSIA,  null, 0));
+        Mockito.when(geoService.byIp(someNewYorkIp)).thenReturn(new Location("New York", Country.USA,  null, 0));
         Mockito.when(geoService.byIp(null)).thenReturn(null);
         MessageSenderImpl messageSender = new MessageSenderImpl(geoService, localizationService);
         String expectedRU = "Добро пожаловать";
@@ -59,5 +68,9 @@ public class MessageSenderImplTest {
         Assertions.assertEquals(expectedRU, result3);
         Assertions.assertEquals(expectedEN, result4);
         Assertions.assertThrows(NullPointerException.class,() -> messageSender.send(headers5));
+    }
+    @Test
+    public void ByIpTest() {
+
     }
 }
