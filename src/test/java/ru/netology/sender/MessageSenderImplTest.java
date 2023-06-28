@@ -8,7 +8,6 @@ import ru.netology.entity.Location;
 import ru.netology.geo.GeoService;
 import ru.netology.geo.GeoServiceImpl;
 import ru.netology.i18n.LocalizationService;
-import ru.netology.i18n.LocalizationServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,52 +78,5 @@ public class MessageSenderImplTest {
         Assertions.assertEquals(messageRU, result3);
         Assertions.assertEquals(messageEN, result4);
         Assertions.assertThrows(NullPointerException.class, () -> messageSender.send(headers5));
-    }
-
-    @Test
-    public void ByIpTest() {
-
-        //arrange
-
-        GeoServiceImpl geoService = new GeoServiceImpl();
-
-        //act
-
-        Location location = geoService.byIp(localhost);
-        Location location1 = geoService.byIp(moscowIp);
-        Location location2 = geoService.byIp(newYorkIP);
-        Location location3 = geoService.byIp(someMoscowIp);
-        Location location4 = geoService.byIp(someNewYorkIp);
-
-        //assert
-
-        Assertions.assertEquals(localhostLoc, location);
-        Assertions.assertEquals(moscowLoc, location1);
-        Assertions.assertEquals(newYorkLoc, location2);
-        Assertions.assertEquals(someMoscowLoc, location3);
-        Assertions.assertEquals(someNewYorkLoc, location4);
-
-    }
-
-    @Test
-    public void localeTest() {
-
-        //arrange
-
-        LocalizationServiceImpl localizationService = new LocalizationServiceImpl();
-
-        //act
-
-        String expect = localizationService.locale(Country.RUSSIA);
-        String expect1 = localizationService.locale(Country.USA);
-        String expect2 = localizationService.locale(Country.GERMANY);
-        String expect3 = localizationService.locale(Country.BRAZIL);
-
-        //assert
-
-        Assertions.assertEquals(expect, messageRU);
-        Assertions.assertEquals(expect1, messageEN);
-        Assertions.assertEquals(expect2, messageEN);
-        Assertions.assertEquals(expect3, messageEN);
     }
 }
